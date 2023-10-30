@@ -6,7 +6,7 @@ fn main() {
 }
 
 // This consumes stdin. Do not call this if you need to use stdin.
-fn log() {
+pub fn log() {
     let name_arg = env::args().nth(0).unwrap_or(String::from("unknown"));
     let args: Vec<_> = env::args().skip(1).collect();
     println!("{} called with {:?}", name_arg, args);
