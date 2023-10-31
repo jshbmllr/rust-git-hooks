@@ -10,7 +10,6 @@ fn main() {
         .expect("Failed to execute git diff");
 
     let diff = String::from_utf8_lossy(&output.stdout);
-    println!("{:?}", diff);
     let message = request::request(diff.to_string()); 
 
     match message {
