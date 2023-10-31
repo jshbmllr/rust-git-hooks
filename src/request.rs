@@ -12,7 +12,7 @@ use serde_json::json;
 use api::ApiResponse;
 
 #[tokio::main]
-async fn request(request_content: String) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+pub async fn request(request_content: String) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let endpoint = "https://api.openai.com/v1/chat/completions";
     let api_key = dotenv::var("OPENAI_API_KEY").expect("OPENAI_API_KEY must be set");
 
@@ -23,7 +23,8 @@ async fn request(request_content: String) -> Result<String, Box<dyn std::error::
     // Define the payload for the API
     let payload = serde_json::to_string(&json!({
       "model": "gpt-3.5-turbo",
-      "messages": [{"role": "user", "content": request_content}],
+      "messages": [{"role":"system","content": "You are a service that accepts git diffs and returns a concise commit message based on them"},
+                   {"role": "user", "content": request_content}],
       "temperature": 0.7
     }))?;
 
