@@ -11,22 +11,22 @@ fn main() {
 
     let diff = String::from_utf8_lossy(&output.stdout);
     println!("{:?}", diff);
-    // let message = request::request(diff.to_string()); 
+    let message = request::request(diff.to_string()); 
 
-    // match message {
-    //     Ok(msg) => {
-    //         let _ = Command::new("git")
-    //             .arg("commit")
-    //             .arg("-m")
-    //             .arg(msg)
-    //             .spawn()
-    //             .expect("Failed to execute git commit")
-    //             .wait()
-    //             .expect("Failed to wait on git commit");
-    //     }
-    //     Err(e) => {
-    //         eprintln!("Error generating commit message: {}", e);
-    //         std::process::exit(1);
-    //     }
+    match message {
+        Ok(msg) => {
+            let _ = Command::new("git")
+                .arg("commit")
+                .arg("-m")
+                .arg(msg)
+                .spawn()
+                .expect("Failed to execute git commit")
+                .wait()
+                .expect("Failed to wait on git commit");
+        }
+        Err(e) => {
+            eprintln!("Error generating commit message: {}", e);
+            std::process::exit(1);
+        }
     }
-//}
+}
