@@ -4,7 +4,6 @@ extern crate serde_json;
 extern crate tokio;
 
 mod api;
-mod logger;
 
 use hyper::header::{HeaderValue, AUTHORIZATION, CONTENT_TYPE};
 use hyper::{Body, Client, Request};
@@ -13,7 +12,7 @@ use serde_json::json;
 use api::ApiResponse;
 
 #[tokio::main]
-async fn request() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+async fn request(request_content: String) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let endpoint = "https://api.openai.com/v1/chat/completions";
     let api_key = dotenv::var("OPENAI_API_KEY").expect("OPENAI_API_KEY must be set");
 
@@ -24,7 +23,7 @@ async fn request() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // Define the payload for the API
     let payload = serde_json::to_string(&json!({
       "model": "gpt-3.5-turbo",
-      "messages": [{"role": "user", "content": "Say this is a test!"}],
+      "messages": [{"role": "user", "content": request_content}],
       "temperature": 0.7
     }))?;
 
@@ -48,5 +47,5 @@ async fn request() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // Print the result
     println!("{:?}", content);
 
-    Ok(())
+    Ok(content).cloned()
 }
