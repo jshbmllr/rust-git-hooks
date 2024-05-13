@@ -29,8 +29,6 @@ pub async fn request(request_content: String) -> Result<String, Box<dyn std::err
     }))?;
 
     // Construct the request
-    //test
-    //test
     let req = Request::builder()
         .method("POST")
         .uri(endpoint)
