@@ -9,12 +9,12 @@ use hyper::header::{HeaderValue, AUTHORIZATION, CONTENT_TYPE};
 use hyper::{Body, Client, Request};
 use hyper_tls::HttpsConnector;
 use serde_json::json;
-use api::ApiResponse;
+use api::ChatResponse;
 
 #[tokio::main]
 pub async fn request(request_content: String) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
-    let endpoint = "https://api.openai.com/v1/chat/completions";
-    let api_key = dotenv::var("OPENAI_API_KEY").expect("OPENAI_API_KEY must be set");
+    let endpoint = "https://api.cohere.ai/v1/chat";
+    let api_key = dotenv::var("CO_API_KEY").expect("CO_API_KEY must be set");
 
     // Create an HTTPS connector and set up the client
     let https = HttpsConnector::new();
@@ -22,13 +22,15 @@ pub async fn request(request_content: String) -> Result<String, Box<dyn std::err
 
     // Define the payload for the API
     let payload = serde_json::to_string(&json!({
-      "model": "gpt-3.5-turbo",
-      "messages": [{"role":"system","content": "You are a service that accepts git diffs and returns a concise commit message based on them"},
-                   {"role": "user", "content": request_content}],
-      "temperature": 0.7
+        "chat_history": [{"role":"system","message": "You are a service that accepts git diffs and returns a concise commit message based on them"},
+                         {"role": "user", "message": request_content}
+                        ],
+        "message": request_content,
     }))?;
 
     // Construct the request
+    //test
+    //test
     let req = Request::builder()
         .method("POST")
         .uri(endpoint)
@@ -38,12 +40,13 @@ pub async fn request(request_content: String) -> Result<String, Box<dyn std::err
         )
         .header(CONTENT_TYPE, HeaderValue::from_static("application/json"))
         .body(Body::from(payload))?;
-
+    
     // Send the request and get the response
     let res = client.request(req).await?;
+    println!("{:?}", res);
     let body_bytes = hyper::body::to_bytes(res).await?;
-    let response: ApiResponse = serde_json::from_slice(&body_bytes)?;
-    let content = &response.choices[0].message.content.clone();
+    let response: ChatResponse = serde_json::from_slice(&body_bytes)?;
+    let content = &response.text.clone();
 
     // Print the result
     println!("{:?}", content);

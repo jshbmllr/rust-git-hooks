@@ -1,5 +1,5 @@
 [package]
-name = "rust_git_hooks"
+name = "rust-git-hooks"
 version = "0.1.0"
 edition = "2021"
 
